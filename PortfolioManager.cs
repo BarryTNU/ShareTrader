@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Controls.Handlers;
 using ShareTrader.Services;
+using ShareTrader.Helpers;
 
 namespace ShareTrader
 {
@@ -28,9 +29,11 @@ namespace ShareTrader
 
 
                 AppGlobals.PortfolioItems.Clear();
+                AppGlobals.BankBalance = 0m;
                 AppGlobals.CapitalInvested = 0m;
                 AppGlobals.PortfolioValue = 0m;
                 bool Success = await FileManager.LoadPortfolio();
+               
 
                 //Iterate through the Portfolio list and get data for each company.
 
@@ -93,9 +96,10 @@ namespace ShareTrader
                     catch (Exception ex)
                     {
 
-                        await AppGlobals.ShowMessage(
-                        "UpdatePortfolio Error",
-                        $"{line}\n\n{ex.Message}");
+                        await CustomMessageBox.ShowAsync(
+                         "UpdatePortfolio Error",
+                        $"{line}\n\n{ex.Message}",
+                        MessageType.Error);
                         continue;// Optionally log or handle the exception
                     }
                 }
@@ -135,7 +139,10 @@ namespace ShareTrader
 
             if (CompanyName == null)
             {
-                await AppGlobals.ShowMessage("Portfolio", "Please select a Company.");
+                await CustomMessageBox.ShowAsync(
+                    "Portfolio",
+                    "Please select a Company.",
+                    MessageType.Warning);
                 return;
             }
 
@@ -152,7 +159,10 @@ namespace ShareTrader
                         parts[0].Equals(CompanyName, StringComparison.OrdinalIgnoreCase))
 
                     {
-                        await AppGlobals.ShowMessage("Portfolio", CompanyName + " is already in your portfolio.");
+                            await CustomMessageBox.ShowAsync(
+                                "Portfolio",
+                                CompanyName + " is already in your portfolio.",
+                                MessageType.Warning);
                         return;
                     }
                 }
@@ -179,7 +189,10 @@ namespace ShareTrader
 
                 File.AppendAllText(fPath, record + Environment.NewLine);
 
-                await AppGlobals.ShowMessage("Portfolio", CompanyName + " added to Portfolio.");
+                await CustomMessageBox.ShowAsync(
+                    "Portfolio",
+                    CompanyName + " added to Portfolio.",
+                    MessageType.Information);
 
                 await UpdatePortfolio();
 
@@ -191,8 +204,10 @@ namespace ShareTrader
             else
             {
                 string message = $"Your API Providor may not support this symbol ({Symbol}) or the symbol is invalid. Please check and try again.";
-                await AppGlobals.ShowMessage("Download Failed",
-                    $"{message}");
+                await CustomMessageBox.ShowAsync(
+                    "Download Failed",
+                    $"{message}",
+                    MessageType.Error);
                 success = false;
             }
 
@@ -207,11 +222,12 @@ namespace ShareTrader
                 return;
 
             // Confirm deletion.
-            bool answer = await page.DisplayAlert(
-                "Remove Company",
-                $"Are you sure you want to remove {companyName}?",
-                "Yes",
-                "No");
+            // Yes / No question
+            bool answer = await CustomMessageBox.ShowQuestionAsync(
+                    "Confirm Removal",
+                    $"Are you sure you want to remove {companyName} from your portfolio?"
+                );
+                      
 
             if (!answer)
                 return;
@@ -221,11 +237,11 @@ namespace ShareTrader
             // If shares are still held, ask whether to sell them.
             if (shares != "0")
             {
-                answer = await page.DisplayAlert(
-                    $"You still hold {shares} {companyName} shares.",
-                    "Do you want to sell them?",
-                    "Yes",
-                    "No");
+                // Yes / No question
+               answer = await CustomMessageBox.ShowQuestionAsync(
+                     $"You still hold {shares} {companyName} shares.",
+                    "Do you want to sell them?"
+                    );               
 
                 if (!answer)
                     return;

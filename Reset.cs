@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShareTrader.Services;
-namespace ShareTrader
+namespace ShareTrader;
+using ShareTrader.Helpers;
 
-{
     public class Reset
     {
      public async static void ResetAlldData()
@@ -18,11 +18,11 @@ namespace ShareTrader
             if (page == null)
                 return;          // or return false if this method returns bool
 
-            bool answer = await page.DisplayAlert(
+          bool answer = await CustomMessageBox.ShowQuestionAsync(
                 "Reset all Data. Are you sure?",
-                message,
-                "Yes",
-                "No");
+                message              
+                );
+
             // Only proceed if user clicked Yes
             if (!answer)
             {
@@ -30,7 +30,14 @@ namespace ShareTrader
             }
             else         // User clicked Yes
             {
-                try
+            try
+            {
+                if (File.Exists(AppGlobals.ConfigFile))
+                    File.Delete(AppGlobals.ConfigFile);
+
+                if (File.Exists(AppGlobals.CompaniesFile))
+                    File.Delete(AppGlobals.CompaniesFile);
+
                 {
                     if (File.Exists(AppGlobals.ConfigFile))
                         File.Delete(AppGlobals.ConfigFile);
@@ -65,14 +72,20 @@ namespace ShareTrader
                         {
                             Directory.Delete(dir, true);
                         }
-                    }              
+                    }
+                  await PortfolioManager.UpdatePortfolio();
+                  
                 }
+            }
 
-                catch (Exception ex)
-                {
-                    await page.DisplayAlert("Error", $"An error occurred while resetting data: {ex.Message}", "OK");
-                }
+            catch (Exception ex)
+            {
+                await CustomMessageBox.ShowAsync(
+                    "Error",
+                    $"An error occurred while resetting data: {ex.Message}",
+                    MessageType.Warning);
+            }
             }
         }
     }
-}
+

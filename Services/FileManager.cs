@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ShareTrader.Helpers;
 
 namespace ShareTrader.Services
 {
@@ -156,8 +157,10 @@ namespace ShareTrader.Services
             }
             catch (Exception ex)
             {
-                _ = AppGlobals.ShowMessage("Load Company Data", ex.Message);
-               
+               CustomMessageBox.ShowAsync(
+               "Load Company Data",
+               ex.Message,
+               MessageType.Error);
             }
             return history;
         }
@@ -256,7 +259,10 @@ namespace ShareTrader.Services
             }
             catch (Exception ex)
             {
-                _ = AppGlobals.ShowMessage("Load Company Data", ex.Message);
+               CustomMessageBox.ShowAsync(
+                   "Load Company Data",
+                   ex.Message,
+                   MessageType.Error);
                 return 0;
             }
 

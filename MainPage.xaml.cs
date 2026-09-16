@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using static ShareTrader.Services.AppGlobals;
 using Microsoft.Maui.Devices;
 using Microsoft.Maui.Controls;
-
+using ShareTrader.Helpers;
 
 namespace ShareTrader;
 
@@ -33,8 +33,9 @@ public partial class MainPage : ContentPage
         Buy,
         Sell
     }
+  
 
-       private TradeMode currentTradeMode;
+private TradeMode currentTradeMode;
 
     private enum CompanySelectorMode
     {
@@ -59,6 +60,8 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         // This makes {Binding PortfolioItems} point to the property above.
         BindingContext = this;
+        CustomMessageBox.ShowAsync = ShowCustomMessageBox;
+        CustomMessageBox.ShowQuestionAsync = ShowQuestionMessageBox;
         Loaded += MainPage_Loaded;
     }
 
@@ -151,10 +154,12 @@ public partial class MainPage : ContentPage
                 
 
         if (company == null)
-        {
-            await DisplayAlert("ShareTrader",
-                               "Please select a company.",
-                               "OK"); 
+       {
+          
+            await CustomMessageBox.ShowAsync(
+          "ShareTrader",
+          "Please select a company.",
+          MessageType.Warning);
             return;
         }    
 
@@ -166,7 +171,7 @@ public partial class MainPage : ContentPage
         switch (selectorMode)
         {
             case CompanySelectorMode.Add:
-                BtnCompanyAction.Text = "Exit";
+                BtnCompanyAction.Text = "Add Company";
                 miAddCompany.IsEnabled = MyPortfolio.Count < MaxPortfolioCompanies;
                 await PortfolioManager.AddSelectedCompany(companyName, companySymbol);
                 // Tell Syncfusion to refresh.
@@ -177,13 +182,13 @@ public partial class MainPage : ContentPage
                 dgPortfolio.InvalidateMeasure();
                 // Refresh the totals.
                // UpdatePortfolioTotals();
-                break;
+                return;
             case CompanySelectorMode.Remove:
                await  PortfolioManager.RemovePortfolioItem(companyName, "0");
                 btnAddNewCompany.IsVisible = false;
                 // Refresh the totals.
               //  UpdatePortfolioTotals();
-                break;
+                return;
 
             case CompanySelectorMode.Buy:
                 LblTradeTitle.Text = "Buy Shares";
@@ -276,7 +281,10 @@ public partial class MainPage : ContentPage
         FileManager.SaveLastPriceUpdate();
         FileManager.SaveLogFile(" Portfolio saved.");
 
-        await DisplayAlert("Portfolio", "Portfolio Saved.", "OK");
+         await CustomMessageBox.ShowAsync(
+        "Portfolio",
+         "Portfolio Saved",         
+          MessageType.Information);
     }
 
    private async void BuyShares_Clicked(object? sender, EventArgs e)
@@ -385,9 +393,10 @@ public partial class MainPage : ContentPage
 
         FileManager.SaveConfig();
 
-        await AppGlobals.ShowMessage(
+        await CustomMessageBox.ShowAsync(
             "API Provider",
-            $"Now using {AppGlobals.ConfigurationManager.APIProvider}");
+            $"Now using {AppGlobals.ConfigurationManager.APIProvider}",
+            MessageType.Information);
     }
 
 
@@ -420,8 +429,11 @@ public partial class MainPage : ContentPage
     async void BtnBankOK_Clicked(object? sender, EventArgs e)
     {
         if (!decimal.TryParse(TxtBankAmount.Text, out decimal amount))
-        {
-            await DisplayAlert("Error", "Please enter a valid amount.", "OK");
+        {         
+            await CustomMessageBox.ShowAsync(
+                "Error",
+                "Please enter a valid amount.",         
+             MessageType.Warning);
             TxtBankAmount.Focus();
             return;
         }
@@ -450,16 +462,27 @@ public partial class MainPage : ContentPage
 
 
     async void Settings_Clicked(object? sender, EventArgs e)
-        => await DisplayAlert("Tools", "Settings not available in this version.", "OK");
+    { 
+      await CustomMessageBox.ShowAsync(
+     "Tools",
+     "Settings not available in this version.",    
+    MessageType.Information);
+        return;
+    }
+       
 
     async void Register_Clicked(object? sender, EventArgs e)
     {
         string Message = "Registration is not required in this version." + Environment.NewLine +
             "However if you use and enjoy the app, please consider supporting us." + Environment.NewLine +
             "Visit our website for more information." + Environment.NewLine + "camsoftAU@gmail.com"+ Environment.NewLine +
-            "Thank you for your support."; 
-             await DisplayAlert("Register", Message,"OK");
-         }
+            "Thank you for your support.";
+            await CustomMessageBox.ShowAsync(
+            "Register",
+             Message,
+            
+            MessageType.Information);
+    }
 
      void Reset_Clicked(object? sender, EventArgs e)
     {
@@ -467,13 +490,20 @@ public partial class MainPage : ContentPage
         AppGlobals.PortfolioItems.Clear();
         dgPortfolio.ItemsSource = null;
         dgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
-        FileManager.LoadConfigData();       
+        FileManager.LoadConfigData();
+        LblBankBalance.Text = 0m.ToString("C");
+        LblCurrentBalance.Text = 0m.ToString("C");
+        LblNewBalance.Text = 0m.ToString("C");
     }  
 
     async void About_Clicked(object sender, EventArgs e)
     {
-        string message = "Produced by Camsoft Australia" + crlf + "Website: Camsoft.au" + crlf + "Email: camsoftau@gmail.com";           
-        await  DisplayAlert($"Share Trading Simulation." + crlf + "Version   " + version, message, "OK");
+        string message = "Produced by Camsoft Australia" + crlf + "Website: Camsoft.au" + crlf + "Email: camsoftau@gmail.com";
+       
+        await CustomMessageBox.ShowAsync(
+            $"Share Trading Simulation. Version {version}",
+            message,            
+            MessageType.Information);
     }
 
     private void ShowManual(object sender, EventArgs e)
@@ -619,7 +649,7 @@ public partial class MainPage : ContentPage
     {
         if (!int.TryParse(TxtShares.Text, out int shares))
         {
-            await DisplayAlert("Error", "Please enter the number of shares.", "OK");
+            await CustomMessageBox.ShowAsync("Error", "Please enter the number of shares.",  MessageType.Warning);
             return;
         }
 
@@ -660,7 +690,6 @@ public partial class MainPage : ContentPage
     public async Task LoadCompanySelector(string fPath)
     {
         CompaniesPopup.Clear();
-
 
         if (!File.Exists(fPath))
         {
@@ -762,6 +791,86 @@ public partial class MainPage : ContentPage
         // Apply to root layout (preferred) or the page itself
     // RootGrid.HeightRequest = screenHeightDip;
         // Optionally: this.HeightRequest = screenHeightDip;
+    }
+
+    private Task ShowCustomMessageBox(
+     string title,
+     string message,
+     MessageType type = MessageType.Information)
+    {
+        LblMessageTitle.Text = title;
+        LblMessageText.Text = message;
+
+        BtnOK.IsVisible = type != MessageType.Question;
+        BtnYes.IsVisible = type == MessageType.Question;
+        BtnNo.IsVisible = type == MessageType.Question;
+
+
+        // Show the correct button row
+        OkButtonRow.IsVisible = type != MessageType.Question;
+        QuestionButtonRow.IsVisible = type == MessageType.Question;
+
+
+        switch (type)
+        {
+            case MessageType.Information:
+                LblMessageIcon.Text = "ℹ️";
+                LblMessageTitle.TextColor = Colors.SteelBlue;
+                break;
+
+            case MessageType.Warning:
+                LblMessageIcon.Text = "⚠️";
+                LblMessageTitle.TextColor = Colors.DarkOrange;
+                break;
+
+            case MessageType.Error:
+                LblMessageIcon.Text = "❌";
+                LblMessageTitle.TextColor = Colors.Red;
+                break;
+
+            case MessageType.Question:
+                LblMessageIcon.Text = "❓";
+                LblMessageTitle.TextColor = Colors.ForestGreen;
+
+                // Hide OK, show Yes/No
+                BtnOK.IsVisible = false;
+                BtnYes.IsVisible = true;
+                BtnNo.IsVisible = true;
+                break;
+        }
+
+        MessagePopup.IsVisible = true;
+        return Task.CompletedTask;
+    }
+
+    private TaskCompletionSource<bool>? _messageBoxResult;
+
+
+    private async Task<bool> ShowQuestionMessageBox(string title, string message)
+    {
+        _messageBoxResult = new TaskCompletionSource<bool>();
+
+        // Reuse the standard popup routine.
+        await ShowCustomMessageBox(title, message, MessageType.Question);
+
+        return await _messageBoxResult.Task;
+    }
+
+    private void BtnOK_Clicked(object sender, EventArgs e)
+    {
+        MessagePopup.IsVisible = false;       
+    }
+
+    private void BtnYes_Clicked(object sender, EventArgs e)
+    {
+        MessagePopup.IsVisible = false;
+        _messageBoxResult?.TrySetResult(true);
+    }
+
+    private void BtnNo_Clicked(object sender, EventArgs e)
+    {
+        MessagePopup.IsVisible = false;
+        _messageBoxResult?.TrySetResult(false);
     }
 
     protected override void OnDisappearing()

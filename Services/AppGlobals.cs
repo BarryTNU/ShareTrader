@@ -4,8 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using static Java.Util.Jar.Attributes;
-
+using ShareTrader.Helpers;
 namespace ShareTrader.Services
 {
     public static class AppGlobals
@@ -221,62 +220,7 @@ namespace ShareTrader.Services
 
                 LoadingPage = null;
             }
-        }
-
-
-        public static async Task ShowMessage(string title, string message)
-        {
-            var page = Application.Current?.Windows[0].Page;
-
-            if (page != null)
-                await page.DisplayAlert(title, message, "OK");
-        }
-
-
-        //====Example===
-        //       bool answer = await Application.Current.MainPage.DisplayAlert(
-        //               "Remove Company",
-        //                "Are you sure you want to remove Tesla?",
-        //                "Yes",
-        //                "No");
-
-        /// if (answer)
-        //  {
-        // User clicked Yes
-        //  }
-        //      else
-        //  {
-        // User clicked No
-        //  }
-
-
-        public static async Task<string> AskYesNoCancel(string title, string message)
-        {
-            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-
-            if (page != null)
-            {
-                bool yes = await page.DisplayAlert(title, message, "Yes", "No");
-
-                return yes ? "Yes" : "No";
-            }
-
-            return "Cancel";
-        }
-
-        //====Example===
-        //          if (result == "Yes")
-        //          {
-        // Remove company
-        //          }
-        //          else if (result == "No")
-        //          {
-        // Don't remove
-        //          }
-        //          else
-        //          {
-        // Cancel pressed
-        //          }
+        }  
 
 
     }

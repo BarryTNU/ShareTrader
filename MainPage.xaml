@@ -1268,6 +1268,100 @@
 
             </Grid>
 
+            <!-- ===================================================== -->
+            <!-- SHARETRADER MESSAGE POPUP                             -->
+            <!-- ===================================================== -->
+
+            <Grid
+    x:Name="MessagePopup"
+    Grid.Row="0"
+    Grid.RowSpan="3"
+    BackgroundColor="#70000000"
+    IsVisible="False"
+    ZIndex="400">
+
+                <Border
+        WidthRequest="250"
+        Padding="16"
+        StrokeThickness="1"
+        BackgroundColor="{AppThemeBinding Light=White, Dark=#202020}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+                    <Grid RowSpacing="12">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Icon -->
+                        <Label
+                x:Name="LblMessageIcon"
+                Grid.Row="0"
+                Text="ℹ️"
+                FontSize="32"
+                HorizontalOptions="Center"/>
+
+                        <!-- Title -->
+                        <Label
+                x:Name="LblMessageTitle"
+                Grid.Row="1"
+                Text="ShareTrader"
+                FontSize="14"
+                FontAttributes="Bold"
+                HorizontalTextAlignment="Center"/>
+
+                        <!-- Message -->
+                        <Label
+                x:Name="LblMessageText"
+                Grid.Row="2"
+                FontSize="14"
+                HorizontalTextAlignment="Center"
+                LineBreakMode="WordWrap"/>
+
+                        <!-- Buttons -->
+                        <Grid Grid.Row="3">
+
+                            <!-- OK button -->
+                            <HorizontalStackLayout
+        x:Name="OkButtonRow"
+        HorizontalOptions="Center">
+
+                                <Button x:Name="BtnOK"
+                Text="OK"
+                WidthRequest="120"
+                Clicked="BtnOK_Clicked"/>
+                            </HorizontalStackLayout>
+
+                            <!-- Yes / No buttons -->
+                            <Grid x:Name="QuestionButtonRow"
+          ColumnDefinitions="*,*"
+          ColumnSpacing="12"
+          IsVisible="False">
+
+                                <Button x:Name="BtnYes"
+                Grid.Column="0"
+                Text="Yes"
+                HorizontalOptions="Fill"
+                Clicked="BtnYes_Clicked"/>
+
+                                <Button x:Name="BtnNo"
+                Grid.Column="1"
+                Text="No"
+                HorizontalOptions="Fill"
+                Clicked="BtnNo_Clicked"/>
+                            </Grid>
+
+                        </Grid>
+
+
+                    </Grid>
+                </Border>
+            </Grid>
+
         </Grid>
 
     </ContentPage.Content>

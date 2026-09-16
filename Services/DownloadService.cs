@@ -2,7 +2,7 @@
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.Json;
-
+using ShareTrader.Helpers;
 
 namespace ShareTrader.Services
 {
@@ -92,7 +92,11 @@ namespace ShareTrader.Services
 
                 if (!ValidatePriceData(apiSymbol, out string reason))
                 {
-                 await AppGlobals.ShowMessage("Data Unavailable",provider + " " + reason);                     
+                 await  CustomMessageBox.ShowAsync(
+                     "Data Unavailable",
+                     provider + " " + reason,
+                     MessageType.Error ); 
+                    
                     return false;
                 }   
 

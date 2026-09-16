@@ -1,6 +1,7 @@
 namespace ShareTrader;
 
 using ShareTrader.Services;
+using ShareTrader.Helpers;
 
 public partial class AddCompanyPopup : ContentPage
 {
@@ -24,15 +25,16 @@ public partial class AddCompanyPopup : ContentPage
     {
         InitializeComponent();
         cvCountries.ItemsSource = Countries;
-        cvCountries.SelectedItem = Countries[0];
+        cvCountries.SelectedItem = Countries[0];    
 
     }
+    
 
-  
+
     private void cvCountries_SelectionChanged(
       object sender,
       SelectionChangedEventArgs e)
-    {
+    {   
         SelectedCountry = e.CurrentSelection.FirstOrDefault()?.ToString() ?? "";
     }
 
@@ -58,10 +60,10 @@ public partial class AddCompanyPopup : ContentPage
             string.IsNullOrWhiteSpace(txtSymbol.Text) ||
             string.IsNullOrWhiteSpace(SelectedCountry))
         {
-            await DisplayAlert(
+            await CustomMessageBox.ShowAsync(
                 "Missing Information",
                 "Please enter Company Name, Symbol and Country.",
-                "OK");
+                MessageType.Information);
             return;
         }
 
@@ -76,17 +78,17 @@ public partial class AddCompanyPopup : ContentPage
         FileManager.SaveCompany(NewCompany);
         FileManager.SavePortfolio(NewCompany);
 
-        await DisplayAlert(
-            "Company Added",
-            $"{NewCompany.Name} ({NewCompany.Symbol}) has been added.",
-            "OK");
 
-           
+        await CustomMessageBox.ShowAsync(
+            "Company Added",
+            NewCompany.Name + " " + NewCompany.Symbol + " has been added.",
+            MessageType.Information );
+    
         CompanyAdded?.Invoke(); // Tell MainPage to refresh.
-      await  PortfolioManager.UpdatePortfolio(); // Refresh the portfolio data.
+     // await  PortfolioManager.UpdatePortfolio(); // Refresh the portfolio data.
 
         await Navigation.PopModalAsync();
-
+       
     }
 
     private bool CompanyExists(string name, string symbol)
@@ -117,10 +119,10 @@ public partial class AddCompanyPopup : ContentPage
      string.IsNullOrWhiteSpace(txtSymbol.Text) ||
      string.IsNullOrWhiteSpace(SelectedCountry))
         {
-            await DisplayAlert(
+            await CustomMessageBox.ShowAsync(
                 "Missing Information",
                 "Please enter Company Name, Symbol and Country.",
-                "OK");
+                MessageType.Information);
             return;
         }
 
@@ -128,9 +130,10 @@ public partial class AddCompanyPopup : ContentPage
 
         if (CompanyExists(companyName, symbol))
         {
-            await DisplayAlert(
-            "Company Already Exists",
-            $"{companyName} ({symbol}) already exists in the {country} list.", "OK");
+            await CustomMessageBox.ShowAsync(
+                "Company Already Exists",
+                $"{companyName} ({symbol}) already exists in the {country} list.",
+                MessageType.Information);
 
             btnSave.IsEnabled = false;
             return;
@@ -144,21 +147,23 @@ public partial class AddCompanyPopup : ContentPage
 
             if (ok)
             {
-                await DisplayAlert("Success",
+                await CustomMessageBox.ShowAsync(
+                    "Success",
                     "Share price download succeeded.",
-                    "OK");
+                    MessageType.Information);
 
                 btnSave.IsEnabled = true;
-                btnSave.Text = "Save";
-                btnExit.Text = "Exit";
+             btnSave.Text = "Save";
+             btnExit.Text = "Exit";
 
             }
             else
             {
                 string message = $"Your API Providor may not support this symbol ({symbol}) or the symbol is invalid. Please check and try again.";
-                await DisplayAlert("Download Failed",
+                await CustomMessageBox.ShowAsync(
+                    "Download Failed",
                     $"{message}",
-                    "OK");
+                    MessageType.Warning);
 
                 btnTest.IsEnabled = true;
                 btnSave.IsEnabled = false;
@@ -166,11 +171,10 @@ public partial class AddCompanyPopup : ContentPage
         }
         finally
         {
-          
+           // AddCompanyPopup.IsVisible = false;
         }     
 
     }
 }
 
       
- 

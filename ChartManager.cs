@@ -7,6 +7,7 @@ using ShareTrader.Services;
 using System.Globalization;
 using Microsoft.Maui.Controls;
 using System.Collections.Generic;
+using ShareTrader.Helpers;
 
 namespace ShareTrader
 {
@@ -333,10 +334,11 @@ namespace ShareTrader
                 }
             }
             catch (Exception ex)
-            {           
-         _ = AppGlobals.ShowMessage(
+            {
+                CustomMessageBox.ShowAsync(
                 "Loading Data Error",
-                $"{ex.Message}");                       
+                $"{ex.Message}",        
+                MessageType.Warning);                       
             }
 
             AppGlobals.PeriodHigh = periodHigh;

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ShareTrader.Helpers;
 
 namespace ShareTrader
 {
@@ -42,11 +42,11 @@ namespace ShareTrader
 
             if (BankBalance < value)
             {
-                await AppGlobals.ShowMessage(
-                    "Portfolio",
-                    "You have insufficient funds for this trade.");
-
-                return;
+                await CustomMessageBox.ShowAsync(
+                    "Buy Shares",
+                    "You have insufficient funds for this trade.",                                     
+                    MessageType.Error);
+                 return;
             }
 
             message = $"Buying {shares} {company} shares will cost {value:C}";
@@ -56,11 +56,11 @@ namespace ShareTrader
             if (page == null)
                 return;          // or return false if this method returns bool
 
-            bool answer = await page.DisplayAlert(
-                "Confirm Purchase?",
-                message,
-                "Yes",
-                "No");
+            // Yes / No question
+            bool answer = await CustomMessageBox.ShowQuestionAsync(
+                "Confirm Purchase",
+                message
+                );
 
             if (!answer)
                 return;
@@ -117,9 +117,10 @@ namespace ShareTrader
 
             if (totalHoldings < shares)
             {
-                await AppGlobals.ShowMessage(
+                await CustomMessageBox.ShowAsync(
                     "Sell Shares",
-                    "You have insufficient shares for this trade.");
+                    "You have insufficient shares for this trade.",
+                    MessageType.Error);
                 return;
             }
             //===== Get the closing price for this company=====
@@ -136,11 +137,11 @@ namespace ShareTrader
             if (page == null)
                 return;
 
-            bool answer = await page.DisplayAlert(
-                "Continue?",
-                message,
-                "Yes",
-                "No");
+            // Yes / No question
+            bool answer = await CustomMessageBox.ShowQuestionAsync(
+                "Confirm Sale",
+                message
+                );
 
             if (!answer)
                 return;
