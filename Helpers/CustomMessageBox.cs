@@ -13,6 +13,20 @@ public enum MessageType
     Warning,
     Error
     }
+   
+
+    public static class CustomMessageBox
+    {
+        // Used for Information / Warning / Error messages.
+        public static Func<string, string, MessageType, Task>? ShowAsync;
+
+        // Used for Yes/No questions.
+        public static Func<string, string, Task<bool>>? ShowQuestionAsync;
+
+        // Which button gets the keyboard focus.
+        public static DefaultButton DefaultFocus { get; set; } = DefaultButton.OK;
+    }
+
     public enum DefaultButton
     {
         OK,
@@ -21,12 +35,5 @@ public enum MessageType
         Exit
     }
 
-    public static class CustomMessageBox
-        {
-        public static Func<string, string, MessageType, Task>? ShowAsync;
-        public static Func<string, string, Task<bool>>? ShowQuestionAsync;
-        public static DefaultButton DefaultFocus { get; set; } = DefaultButton.OK;
-    }
-
- }
+}
 

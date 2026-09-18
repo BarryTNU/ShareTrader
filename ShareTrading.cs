@@ -43,7 +43,7 @@ namespace ShareTrader
             if (BankBalance < value)
             {
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Buy Shares",
                     "You have insufficient funds for this trade.",                                     
                     MessageType.Error);
@@ -59,7 +59,7 @@ namespace ShareTrader
 
             // Yes / No question
             CustomMessageBox.DefaultFocus = DefaultButton.Yes;
-            bool answer = await CustomMessageBox.ShowQuestionAsync(
+            bool answer = await CustomMessageBox.ShowQuestionAsync!(
                 "Confirm Purchase",
                 message
                 );
@@ -72,7 +72,7 @@ namespace ShareTrader
             AppGlobals.CapitalInvested += value;
             string tradeType = "Buy";
 
-            string tradeInfo = $"{DateTime.Today:d} {shares} Bought @ {price:C}";            
+         //   string tradeInfo = $"{DateTime.Today:d} {shares} Bought @ {price:C}";            
 
             string tradeDate = DateTime.Today.ToString("yyyy-MM-dd");
             string tradeData = $"{company},{shares},{price},{tradeDate},{tradeType}";
@@ -121,7 +121,7 @@ namespace ShareTrader
             {
 
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Sell Shares",
                     "You have insufficient shares for this trade.",
                     MessageType.Error);
@@ -143,7 +143,7 @@ namespace ShareTrader
 
             // Yes / No question
             CustomMessageBox.DefaultFocus = DefaultButton.Yes;
-            bool answer = await CustomMessageBox.ShowQuestionAsync(
+            bool answer = await CustomMessageBox.ShowQuestionAsync!(
                 "Confirm Sale",
                 message
                 );

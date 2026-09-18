@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<ContentPage
+
+    <ContentPage
     x:Class="ShareTrader.MainPage"
+    xmlns:local="clr-namespace:ShareTrader"
+    x:DataType="local:MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
@@ -19,7 +22,7 @@
         <MenuBarItem Text="Company">
 
             <MenuFlyoutItem
-                x:Name="miAddCompany"
+                x:Name="MiAddCompany"
                 Text="Add Company"
                 Clicked="AddCompany_Clicked" />
 
@@ -271,12 +274,12 @@
                 <Grid>
 
                     <syncfusion:SfDataGrid
-                        x:Name="dgPortfolio"
+                        x:Name="DgPortfolio"
                         AutoGenerateColumnsMode="None"
                         SelectionMode="Single"
                         ColumnWidthMode="Fill"
                         ItemsSource="{Binding PortfolioItems}" 
-                        SelectionChanged="dgPortfolio_SelectionChanged">
+                        SelectionChanged="DgPortfolio_SelectionChanged">
 
                         <syncfusion:SfDataGrid.Columns>
 
@@ -926,20 +929,20 @@
                             </Grid.ColumnDefinitions>
 
                             <Button
-                                x:Name="btnCompanyAction"
+                                x:Name="BtnCompanyAction"
                                 Grid.Column="0"
                                 Text="Add Company"                               
                                 Clicked="CompanyAction_Clicked" />
 
                             <Button
-                                x:Name="btnAddNewCompany"
+                                x:Name="BtnAddNewCompany"
                                 Grid.Column="1"
                                 Text="New Company"
                                 IsVisible="false"
-                                Clicked="btnAddNewCompany_Clicked"/>
+                                Clicked="BtnAddNewCompany_Clicked"/>
 
                             <Button
-                                 x:Name="btnExit"
+                                 x:Name="BtnExit"
                                 Grid.Column="2"
                                 Text="Exit"
                                 Clicked="CancelCompanySelection_Clicked" />
@@ -1124,7 +1127,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Button
-                                x:Name="btnTrade"
+                                x:Name="BtnTrade"
                                 Grid.Column="0"
                                 Text="Buy"                                
                                 Clicked="BtnTradeOK_Clicked" />

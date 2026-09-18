@@ -113,9 +113,9 @@ namespace ShareTrader.Services
                 "MarketStack"
             };
 
-
-        public static ObservableCollection<PortfolioItem> PortfolioItems
-            = new ObservableCollection<PortfolioItem>();
+        public static ObservableCollection<PortfolioItem> PortfolioItems { get; } = [];
+        //public static ObservableCollection<PortfolioItem> PortfolioItems
+       //     = new ObservableCollection<PortfolioItem>();
 
        
         public class PortfolioItem

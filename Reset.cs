@@ -19,7 +19,7 @@ using ShareTrader.Helpers;
                 return;          // or return false if this method returns bool
 
         CustomMessageBox.DefaultFocus = DefaultButton.No;
-        bool answer = await CustomMessageBox.ShowQuestionAsync(
+        bool answer = await CustomMessageBox.ShowQuestionAsync!(
                 "Reset all Data. Are you sure?",
                 message              
                 );
@@ -78,7 +78,7 @@ using ShareTrader.Helpers;
             catch (Exception ex)
             {
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Error",
                     $"An error occurred while resetting data: {ex.Message}",
                     MessageType.Warning);

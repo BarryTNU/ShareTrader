@@ -93,7 +93,7 @@ namespace ShareTrader.Services
                 if (!ValidatePriceData(apiSymbol, out string reason))
                 {
                     CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                    await  CustomMessageBox.ShowAsync(
+                    await  CustomMessageBox.ShowAsync!(
                      "Data Unavailable",
                      provider + " " + reason,
                      MessageType.Error ); 

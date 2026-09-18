@@ -164,7 +164,7 @@ namespace ShareTrader.Services
             catch (Exception ex)
             {
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                CustomMessageBox.ShowAsync(
+                CustomMessageBox.ShowAsync!(
                "Load Company Data",
                ex.Message,
                MessageType.Error);
@@ -267,7 +267,7 @@ namespace ShareTrader.Services
             catch (Exception ex)
             {
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                CustomMessageBox.ShowAsync(
+                CustomMessageBox.ShowAsync!(
                    "Load Company Data",
                    ex.Message,
                    MessageType.Error);

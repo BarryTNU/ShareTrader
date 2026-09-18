@@ -99,7 +99,7 @@ namespace ShareTrader
                     {
 
                         CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                        await CustomMessageBox.ShowAsync(
+                        await CustomMessageBox.ShowAsync!(
                          "UpdatePortfolio Error",
                         $"{line}\n\n{ex.Message}",
                         MessageType.Error);
@@ -143,7 +143,7 @@ namespace ShareTrader
             if (CompanyName == null)
             {
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Portfolio",
                     "Please select a Company.",
                     MessageType.Warning);
@@ -164,7 +164,7 @@ namespace ShareTrader
 
                     {
                         CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                        await CustomMessageBox.ShowAsync(
+                        await CustomMessageBox.ShowAsync!(
                                 "Portfolio",
                                 CompanyName + " is already in your portfolio.",
                                 MessageType.Warning);
@@ -195,7 +195,7 @@ namespace ShareTrader
                 File.AppendAllText(fPath, record + Environment.NewLine);
 
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Portfolio",
                     CompanyName + " added to Portfolio.",
                     MessageType.Information);
@@ -211,7 +211,7 @@ namespace ShareTrader
             {
                 string message = $"Your API Providor may not support this symbol ({Symbol}) or the symbol is invalid. Please check and try again.";
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Download Failed",
                     $"{message}",
                     MessageType.Error);
@@ -229,7 +229,7 @@ namespace ShareTrader
                 return;
 
             CustomMessageBox.DefaultFocus = DefaultButton.OK;
-            bool answer = await CustomMessageBox.ShowQuestionAsync(
+            bool answer = await CustomMessageBox.ShowQuestionAsync!(
                     "Confirm Removal",
                     $"Are you sure you want to remove {companyName} from your portfolio?"
                 );
@@ -294,7 +294,7 @@ namespace ShareTrader
                 FileManager.SaveLogFile(logEntry);
 
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Portfolio",
                     $"{companyName} has been deleted.",
                     MessageType.Information);
@@ -313,7 +313,7 @@ namespace ShareTrader
             if (AppGlobals.MyPortfolio.Count == 0)
             {
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                     "Portfolio",
                     $"Your portfolio is now empty.",
                     MessageType.Information);
@@ -329,7 +329,7 @@ namespace ShareTrader
             List<AppGlobals.TransactionItem> trades =
                FileManager.LoadTradingHistory(company);
             //=====Set up a new list to hold the updated tradingItems list=======
-            List<AppGlobals.TransactionItem> tempList = new List<AppGlobals.TransactionItem>();
+          //  List<AppGlobals.TransactionItem> tempList = new List<AppGlobals.TransactionItem>();
                       
 
             foreach (var tradeItem in trades)

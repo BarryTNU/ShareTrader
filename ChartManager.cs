@@ -336,7 +336,7 @@ namespace ShareTrader
             catch (Exception ex)
             {
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                CustomMessageBox.ShowAsync(
+                CustomMessageBox.ShowAsync!(
                 "Loading Data Error",
                 $"{ex.Message}",        
                 MessageType.Warning);                       

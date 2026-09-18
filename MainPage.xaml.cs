@@ -11,16 +11,15 @@ namespace ShareTrader;
 
 public partial class MainPage : ContentPage
 {
-    public static ObservableCollection<PortfolioItem> PortfolioItems = new();
+    public ObservableCollection<AppGlobals.PortfolioItem> PortfolioItems
+    => AppGlobals.PortfolioItems;
+   // public static ObservableCollection<PortfolioItem> PortfolioItems { get; } = [];
 
-    private ObservableCollection<CompanyItem> CompanyList =
-  new ObservableCollection<CompanyItem>();
+    private readonly ObservableCollection<CompanyItem> CompanyList = [];
 
-    private ObservableCollection<CompanyItem>CompaniesPopup =
-        new ObservableCollection<CompanyItem>();
-
+    private readonly ObservableCollection<CompanyItem> CompaniesPopup = [];
     public const int MaxPortfolioCompanies = 50;
-    public const string version = "1.1.0";
+    public const string version = "1.2.0";
     public const string crlf = "\n";
 
 
@@ -75,11 +74,11 @@ private TradeMode currentTradeMode;
     CreateDirectories();       
         FileManager.LoadConfigData();
         BuildApiProviderMenu();
-        dgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
+        DgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
 
         if (GetPortfolioCount() >= MaxPortfolioCompanies)
         {
-            miAddCompany.IsEnabled = false; // gray out the Add Company menu item if the portfolio is full
+            MiAddCompany.IsEnabled = false; // gray out the Add Company menu item if the portfolio is full
         }
 
     
@@ -155,13 +154,15 @@ private TradeMode currentTradeMode;
 
     private async void CompanyAction_Clicked(object? sender, EventArgs e)
     {
-        CompanyItem? company = gridCompanies.SelectedRow as AppGlobals.CompanyItem;
-                
+        if (gridCompanies.SelectedRow is not AppGlobals.CompanyItem company)
+            return;
+
+        // Use company here.         
 
         if (company == null)
        {
           CustomMessageBox.DefaultFocus = DefaultButton.OK;
-          await CustomMessageBox.ShowAsync(
+          await CustomMessageBox.ShowAsync!(
           "ShareTrader",
           "Please select a company.",
           MessageType.Warning);
@@ -177,22 +178,22 @@ private TradeMode currentTradeMode;
         {
             case CompanySelectorMode.Add:
                 CompanySelector.IsVisible = false;
-                btnCompanyAction.Text = "Add Company";
-                miAddCompany.IsEnabled = MyPortfolio.Count < MaxPortfolioCompanies;
+                BtnCompanyAction.Text = "Add Company";
+                MiAddCompany.IsEnabled = MyPortfolio.Count < MaxPortfolioCompanies;
                 await PortfolioManager.AddSelectedCompany(companyName, companySymbol);
                 // Tell Syncfusion to refresh.
-                dgPortfolio.ItemsSource = null;
-               dgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
+                DgPortfolio.ItemsSource = null;
+               DgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
                 // Force SfDataGrid to redraw.
-               dgPortfolio.View?.Refresh();
-                dgPortfolio.InvalidateMeasure();
+               DgPortfolio.View?.Refresh();
+                DgPortfolio.InvalidateMeasure();
                 // Refresh the totals.
                UpdatePortfolioTotals();
                 return;
             case CompanySelectorMode.Remove:
                 CompanySelector.IsVisible = false;
                 await  PortfolioManager.RemovePortfolioItem(companyName, "0");
-                btnAddNewCompany.IsVisible = false;
+                BtnAddNewCompany.IsVisible = false;
                 // Refresh the totals.
                 UpdatePortfolioTotals();
                 return;
@@ -222,18 +223,18 @@ private TradeMode currentTradeMode;
         string fPath = CompaniesFile;
         selectorMode = CompanySelectorMode.Add;
 
-        btnCompanyAction.Text = "Add Company";
+        BtnCompanyAction.Text = "Add Company";
         LblCompanySelectorTitle.Text = "Add Company";
        // btnExit.Text = "Exit";
         TxtSearch.Text = "";
         TxtSearch.Focus();
-        btnAddNewCompany.IsVisible = MyPortfolio.Count < MaxPortfolioCompanies;
+        BtnAddNewCompany.IsVisible = MyPortfolio.Count < MaxPortfolioCompanies;
         await  LoadCompanySelector(fPath);
         CompanySelector.IsVisible = true;
         TxtSearch.Focus();
     }
 
-    private async void btnAddNewCompany_Clicked(object? sender, EventArgs e)
+    private async void BtnAddNewCompany_Clicked(object? sender, EventArgs e)
     {
         var popup = new AddCompanyPopup();
 
@@ -253,10 +254,10 @@ private TradeMode currentTradeMode;
         string fPath = PortfolioFile;
         selectorMode = CompanySelectorMode.Remove;
         LblCompanySelectorTitle.Text = "Remove Company";
-        btnCompanyAction.Text = "Remove Company";
+        BtnCompanyAction.Text = "Remove Company";
         TxtSearch.Text = "";
         TxtSearch.Focus();
-        btnAddNewCompany.IsVisible = false;
+        BtnAddNewCompany.IsVisible = false;
 
        await LoadCompanySelector(fPath);
         CompanySelector.IsVisible = true;
@@ -277,14 +278,11 @@ private TradeMode currentTradeMode;
             gridCompanies.ItemsSource = CompaniesPopup;
             return;
         }
-
         var filtered = CompaniesPopup
             .Where(c =>
-                c.Name.ToUpper().Contains(search) ||
-                c.Symbol.ToUpper().Contains(search))
+                c.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                c.Symbol.Contains(search, StringComparison.OrdinalIgnoreCase))
             .ToList();
-
-        gridCompanies.ItemsSource = filtered;
     }
 
     async void SavePortfolio_Clicked(object? sender, EventArgs e)
@@ -295,7 +293,7 @@ private TradeMode currentTradeMode;
         FileManager.SaveLogFile(" Portfolio saved.");
 
         CustomMessageBox.DefaultFocus = DefaultButton.OK;
-        await CustomMessageBox.ShowAsync(
+        await CustomMessageBox.ShowAsync!(
         "Portfolio",
          "Portfolio Saved",         
           MessageType.Information);
@@ -307,9 +305,9 @@ private TradeMode currentTradeMode;
         selectorMode = CompanySelectorMode.Buy;
         currentTradeMode = TradeMode.Buy;
         LblCompanySelectorTitle.Text = "Buy Shares";
-        btnCompanyAction.Text = "Buy Shares";
-        btnTrade.IsVisible = true;
-        btnTrade.Text = "Buy";
+        BtnCompanyAction.Text = "Buy Shares";
+        BtnTrade.IsVisible = true;
+        BtnTrade.Text = "Buy";
         TxtSearch.Text = "";
         TxtSearch.Focus();
       await  LoadCompanySelector(fPath);
@@ -322,9 +320,9 @@ private TradeMode currentTradeMode;
         selectorMode = CompanySelectorMode.Sell;
         currentTradeMode = TradeMode.Sell;
         LblCompanySelectorTitle.Text = "Sell Shares";
-        btnCompanyAction.Text = "Sell Shares";
-        btnTrade.IsVisible = true;
-        btnTrade.Text = "Sell";
+        BtnCompanyAction.Text = "Sell Shares";
+        BtnTrade.IsVisible = true;
+        BtnTrade.Text = "Sell";
         TxtSearch.Text = "";
         TxtSearch.Focus();
      await   LoadCompanySelector(fPath);
@@ -408,7 +406,7 @@ private TradeMode currentTradeMode;
         FileManager.SaveConfig();
 
         CustomMessageBox.DefaultFocus = DefaultButton.OK;
-        await CustomMessageBox.ShowAsync(
+        await CustomMessageBox.ShowAsync!(
         "API Provider",
         $"Now using {AppGlobals.ConfigurationManager.APIProvider}",
         MessageType.Information);
@@ -447,7 +445,7 @@ private TradeMode currentTradeMode;
         {
 
             CustomMessageBox.DefaultFocus = DefaultButton.OK;
-            await CustomMessageBox.ShowAsync(
+            await CustomMessageBox.ShowAsync!(
             "Error",
             "Please enter a valid amount.",         
              MessageType.Warning);
@@ -481,7 +479,7 @@ private TradeMode currentTradeMode;
     async void Settings_Clicked(object? sender, EventArgs e)
     {
      CustomMessageBox.DefaultFocus = DefaultButton.OK;
-     await CustomMessageBox.ShowAsync(
+     await CustomMessageBox.ShowAsync!(
      "Tools",
      "Settings not available in this version.",    
     MessageType.Information);
@@ -497,7 +495,7 @@ private TradeMode currentTradeMode;
             "Thank you for your support.";
 
         CustomMessageBox.DefaultFocus = DefaultButton.OK;
-        await CustomMessageBox.ShowAsync(
+        await CustomMessageBox.ShowAsync!(
         "Register",
         Message,            
         MessageType.Information);
@@ -507,8 +505,8 @@ private TradeMode currentTradeMode;
     {
         Reset.ResetAlldData();
         AppGlobals.PortfolioItems.Clear();
-        dgPortfolio.ItemsSource = null;
-        dgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
+        DgPortfolio.ItemsSource = null;
+        DgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
         FileManager.LoadConfigData();
         LblBankBalance.Text = 0m.ToString("C");
         LblCurrentBalance.Text = 0m.ToString("C");
@@ -520,7 +518,7 @@ private TradeMode currentTradeMode;
         string message = "Produced by Camsoft Australia" + crlf + "Website: Camsoft.au" + crlf + "Email: camsoftau@gmail.com";
 
         CustomMessageBox.DefaultFocus = DefaultButton.OK;
-        await CustomMessageBox.ShowAsync(
+        await CustomMessageBox.ShowAsync!(
         $"Share Trading Simulation. Version {version}",
         message,            
         MessageType.Information);
@@ -566,8 +564,7 @@ private TradeMode currentTradeMode;
 
             // Show newest entry first.
             Array.Reverse(lines);
-            lines = lines.Take(200).ToArray();
-
+            lines = [.. lines.Take(200)];
             Information.Text = string.Join(Environment.NewLine, lines);
         }
         catch (Exception ex)
@@ -578,7 +575,7 @@ private TradeMode currentTradeMode;
 
     private void Show_Analysis(string company)
     {
-       dgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
+       DgPortfolio.ItemsSource = AppGlobals.PortfolioItems;
 
         if (AppGlobals.PortfolioItems.Count == 0)
         {
@@ -587,7 +584,7 @@ private TradeMode currentTradeMode;
             return;
         }
 
-      string Recomendation = AnalysisPanel.GetRecommendation(company);
+     // string Recomendation = AnalysisPanel.GetRecommendation(company);
 
 
         TextView.IsVisible = false;
@@ -609,14 +606,14 @@ private TradeMode currentTradeMode;
             VolumeChart,
             company);
 
-        var purchase = AnalysisPanel.GetPurchaseSummary(company);
+        var (row3, row4) = AnalysisPanel.GetPurchaseSummary(company);
 
-        LblAnalysis2Row3.Text = purchase.Row3;
-        LblAnalysis2Row4.Text = purchase.Row4;
+        LblAnalysis2Row3.Text = row3;
+        LblAnalysis2Row4.Text = row4;
 
     }
 
-   private void dgPortfolio_SelectionChanged(
+   private void DgPortfolio_SelectionChanged(
     object sender,
     Syncfusion.Maui.DataGrid.DataGridSelectionChangedEventArgs e)
 {
@@ -648,14 +645,14 @@ private TradeMode currentTradeMode;
 
     private void TxtShares_Completed(object sender, EventArgs e)
     {
-        btnTrade.Focus();
+        BtnTrade.Focus();
     }
     private void TxtBankAmount_Completed(object sender, EventArgs e)
     {
-        if (decimal.TryParse(TxtBankAmount.Text, out decimal amount))
+        if (decimal.TryParse(TxtBankAmount.Text, out _))
         {
             BtnBankOK.Focus();
-        }      
+        }
     }
 
     private void TxtShares_TextChanged(object sender, TextChangedEventArgs e)
@@ -682,7 +679,7 @@ private TradeMode currentTradeMode;
         if (!int.TryParse(TxtShares.Text, out int shares))
         {
             CustomMessageBox.DefaultFocus = DefaultButton.OK;
-            await CustomMessageBox.ShowAsync(
+            await CustomMessageBox.ShowAsync!(
                 "Error", 
                 "Please enter the number of shares.",  
                 MessageType.Warning);
@@ -692,7 +689,7 @@ private TradeMode currentTradeMode;
         // Use the values here        
 
         BuySellPopup.IsVisible = false;
-        decimal tradeValue = shares * currentPrice;
+       // decimal tradeValue = shares * currentPrice;
 
         if (currentTradeMode == TradeMode.Buy)
         {
@@ -821,12 +818,11 @@ private TradeMode currentTradeMode;
     private void SetPageHeightToScreen(DisplayInfo? info = null)
     {
         var display = info ?? DeviceDisplay.MainDisplayInfo;
-        // DisplayInfo.Height is in physical pixels; divide by Density to get device-independent units (DIP)
-        double screenHeightDip = display.Height / display.Density;
+        //DisplayInfo.Height is in physical pixels; divide by Density to get device-independent units (DIP)
+      double screenHeightDip = display.Height / display.Density;
 
-        // Apply to root layout (preferred) or the page itself
-    // RootGrid.HeightRequest = screenHeightDip;
-        // Optionally: this.HeightRequest = screenHeightDip;
+        // Apply to root layout (preferred) or the page itself    
+         this.HeightRequest = screenHeightDip;
     }
 
     private Task ShowCustomMessageBox(
@@ -892,7 +888,7 @@ private TradeMode currentTradeMode;
                     break;
 
                 case DefaultButton.Exit:
-                    btnExit.Focus();
+                    BtnExit.Focus();
                     break;
 
                 default:

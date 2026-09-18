@@ -61,7 +61,7 @@ public partial class AddCompanyPopup : ContentPage
             string.IsNullOrWhiteSpace(SelectedCountry))
         {
             CustomMessageBox.DefaultFocus = DefaultButton.OK;
-            await CustomMessageBox.ShowAsync(
+            await CustomMessageBox.ShowAsync!(
                 "Missing Information",
                 "Please enter Company Name, Symbol and Country.",
                 MessageType.Information);
@@ -81,7 +81,7 @@ public partial class AddCompanyPopup : ContentPage
 
 
         CustomMessageBox.DefaultFocus = DefaultButton.OK;
-        await CustomMessageBox.ShowAsync(
+        await CustomMessageBox.ShowAsync!(
             "Company Added",
             NewCompany.Name + " " + NewCompany.Symbol + " has been added.",
             MessageType.Information );
@@ -121,7 +121,7 @@ public partial class AddCompanyPopup : ContentPage
 
         {
             CustomMessageBox.DefaultFocus = DefaultButton.OK;
-            await CustomMessageBox.ShowAsync(
+            await CustomMessageBox.ShowAsync!(
                 "Missing Information",
                 "Please enter Company Name, Symbol and Country.",
                 MessageType.Information);
@@ -136,7 +136,7 @@ public partial class AddCompanyPopup : ContentPage
         if (CompanyExists(companyName, symbol))
         {
             CustomMessageBox.DefaultFocus = DefaultButton.OK;
-            await CustomMessageBox.ShowAsync(
+            await CustomMessageBox.ShowAsync!(
                 "Company Already Exists",
                 $"{companyName} ({symbol}) already exists in the {country} list.",
                 MessageType.Information);
@@ -159,7 +159,7 @@ public partial class AddCompanyPopup : ContentPage
                     File.AppendAllText(fPath, record + Environment.NewLine);
 
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                         "Portfolio",
                         companyName + " added to Portfolio.",
                         MessageType.Information);
@@ -180,11 +180,11 @@ public partial class AddCompanyPopup : ContentPage
                 {
                     string message = $"Your API Providor may not support this symbol ({symbol}) or the symbol is invalid. Please check and try again.";
                 CustomMessageBox.DefaultFocus = DefaultButton.OK;
-                await CustomMessageBox.ShowAsync(
+                await CustomMessageBox.ShowAsync!(
                         "Download Failed",
                         $"{message}",
                         MessageType.Error);
-                    success = false;
+                   // success = false;
                 }
 
         }
