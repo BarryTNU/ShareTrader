@@ -283,40 +283,54 @@
                             <syncfusion:DataGridTextColumn
                                 MappingName="CompanyName"
                                 HeaderText="Company"
+                                HeaderTextAlignment="Center"
+                                CellTextAlignment="Start"
                                 Width="200" />
 
                             <syncfusion:DataGridTextColumn
                                 MappingName="Trend"
                                 HeaderText="Trend"
+                                HeaderTextAlignment="Center"
+                                CellTextAlignment="Center"
                                 Width="85" />
 
                             <syncfusion:DataGridNumericColumn
                                 MappingName="Shares"
                                 HeaderText="Shares"
+                                HeaderTextAlignment="Center"
+                                CellTextAlignment="Center"
                                 Format="N0"
                                 Width="100" />
 
                             <syncfusion:DataGridNumericColumn
                                 MappingName="TradePrice"
                                 HeaderText="Average Buy Price"
-                                Format="C2"
+                                HeaderTextAlignment="Center"
+                                CellTextAlignment="Center"
+                                Format="C2" 
                                 Width="110" />
 
                             <syncfusion:DataGridNumericColumn
                                 MappingName="CurrentPrice"
                                 HeaderText="Current Price"
+                                HeaderTextAlignment="Center"
+                                CellTextAlignment="Center"
                                 Format="C2"
                                 Width="110" />
 
                             <syncfusion:DataGridNumericColumn
                                 MappingName="ItemCost"
                                  HeaderText="Cost"
+                                 HeaderTextAlignment="Center"
+                                 CellTextAlignment="Center"
                                  Format="C2"
                                  Width="120" />
 
                             <syncfusion:DataGridNumericColumn
                                 MappingName="ItemValue"
                                 HeaderText="Item Value"
+                                HeaderTextAlignment="Center"
+                                CellTextAlignment="Center"
                                 Format="C2"
                                 Width="110" />
 
@@ -324,6 +338,8 @@
                             <syncfusion:DataGridNumericColumn
                                  MappingName="Profit"
                                  HeaderText="Profit/Loss"
+                                 HeaderTextAlignment="Center"
+                                 CellTextAlignment="Center"
                                  Format="C2"
                                  Width="120" />
 
@@ -910,9 +926,9 @@
                             </Grid.ColumnDefinitions>
 
                             <Button
-                                x:Name="BtnCompanyAction"
+                                x:Name="btnCompanyAction"
                                 Grid.Column="0"
-                                Text="Add Company"
+                                Text="Add Company"                               
                                 Clicked="CompanyAction_Clicked" />
 
                             <Button
@@ -1110,7 +1126,7 @@
                             <Button
                                 x:Name="btnTrade"
                                 Grid.Column="0"
-                                Text="Buy"
+                                Text="Buy"                                
                                 Clicked="BtnTradeOK_Clicked" />
 
                             <Button
@@ -1251,7 +1267,7 @@
                             <Button
                                 x:Name="BtnBankOK"
                                 Grid.Column="0"
-                                Text="OK"
+                                Text="OK"                                
                                 Clicked="BtnBankOK_Clicked" />
 
                             <Button
@@ -1273,20 +1289,20 @@
             <!-- ===================================================== -->
 
             <Grid
-    x:Name="MessagePopup"
-    Grid.Row="0"
-    Grid.RowSpan="3"
-    BackgroundColor="#70000000"
-    IsVisible="False"
-    ZIndex="400">
+                x:Name="MessagePopup"
+                 Grid.Row="0"
+                Grid.RowSpan="3"
+                BackgroundColor="#70000000"
+                IsVisible="False"
+                ZIndex="400">
 
-                <Border
-        WidthRequest="250"
-        Padding="16"
-        StrokeThickness="1"
-        BackgroundColor="{AppThemeBinding Light=White, Dark=#202020}"
-        HorizontalOptions="Center"
-        VerticalOptions="Center">
+             <Border
+                WidthRequest="250"
+                Padding="16"
+                StrokeThickness="1"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#202020}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
 
                     <Grid RowSpacing="12">
 
@@ -1322,48 +1338,43 @@
                 HorizontalTextAlignment="Center"
                 LineBreakMode="WordWrap"/>
 
-                        <!-- Buttons -->
-                        <Grid Grid.Row="3">
+                  <!-- Buttons -->
+              <Grid Grid.Row="3">
 
-                            <!-- OK button -->
-                            <HorizontalStackLayout
-        x:Name="OkButtonRow"
-        HorizontalOptions="Center">
+                  <!-- OK button -->
+                 <HorizontalStackLayout
+                x:Name="OkButtonRow"
+                HorizontalOptions="Center">
 
-                                <Button x:Name="BtnOK"
+                <Button x:Name="BtnOK"
                 Text="OK"
-                WidthRequest="120"
+                WidthRequest="120"                
                 Clicked="BtnOK_Clicked"/>
-                            </HorizontalStackLayout>
+                     
+                 </HorizontalStackLayout>
 
-                            <!-- Yes / No buttons -->
-                            <Grid x:Name="QuestionButtonRow"
-          ColumnDefinitions="*,*"
-          ColumnSpacing="12"
-          IsVisible="False">
+                        <!-- Yes / No buttons -->
+             <Grid x:Name="QuestionButtonRow"
+                ColumnDefinitions="*,*"
+                ColumnSpacing="12"
+                IsVisible="False">
 
-                                <Button x:Name="BtnYes"
+                <Button x:Name="BtnYes"
                 Grid.Column="0"
-                Text="Yes"
+                Text="Yes"                       
                 HorizontalOptions="Fill"
                 Clicked="BtnYes_Clicked"/>
 
-                                <Button x:Name="BtnNo"
+                <Button x:Name="BtnNo"
                 Grid.Column="1"
                 Text="No"
                 HorizontalOptions="Fill"
                 Clicked="BtnNo_Clicked"/>
                             </Grid>
-
                         </Grid>
-
-
                     </Grid>
                 </Border>
-            </Grid>
-
+            </Grid>         
         </Grid>
-
     </ContentPage.Content>
-
 </ContentPage>

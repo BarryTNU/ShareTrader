@@ -17,8 +17,7 @@ namespace ShareTrader
         {
             try
             {
-                //==== Match a file in StockData with a company in MyPortfolio and update dgPortfolio ====
-
+                
                 int SharePackage = 0;//Number of shares in a parcel
                  decimal ParcelCost = 0m;//
                 decimal ParcelValue = 0m;//Total value of all shares
@@ -28,6 +27,7 @@ namespace ShareTrader
                  string fPath = "";
 
 
+                AppGlobals.MyPortfolio.Clear();
                 AppGlobals.PortfolioItems.Clear();
                 AppGlobals.BankBalance = 0m;
                 AppGlobals.CapitalInvested = 0m;
@@ -37,7 +37,9 @@ namespace ShareTrader
 
                 //Iterate through the Portfolio list and get data for each company.
 
-                foreach (string line in AppGlobals.MyPortfolio)
+
+                foreach (string line in AppGlobals.MyPortfolio) //==== Match a file in StockData with a company in MyPortfolio and update dgPortfolio ====
+
                 {
                     try
                     {
@@ -96,6 +98,7 @@ namespace ShareTrader
                     catch (Exception ex)
                     {
 
+                        CustomMessageBox.DefaultFocus = DefaultButton.OK;
                         await CustomMessageBox.ShowAsync(
                          "UpdatePortfolio Error",
                         $"{line}\n\n{ex.Message}",
@@ -139,6 +142,7 @@ namespace ShareTrader
 
             if (CompanyName == null)
             {
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
                     "Portfolio",
                     "Please select a Company.",
@@ -159,7 +163,8 @@ namespace ShareTrader
                         parts[0].Equals(CompanyName, StringComparison.OrdinalIgnoreCase))
 
                     {
-                            await CustomMessageBox.ShowAsync(
+                        CustomMessageBox.DefaultFocus = DefaultButton.OK;
+                        await CustomMessageBox.ShowAsync(
                                 "Portfolio",
                                 CompanyName + " is already in your portfolio.",
                                 MessageType.Warning);
@@ -189,6 +194,7 @@ namespace ShareTrader
 
                 File.AppendAllText(fPath, record + Environment.NewLine);
 
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
                     "Portfolio",
                     CompanyName + " added to Portfolio.",
@@ -204,6 +210,7 @@ namespace ShareTrader
             else
             {
                 string message = $"Your API Providor may not support this symbol ({Symbol}) or the symbol is invalid. Please check and try again.";
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
                     "Download Failed",
                     $"{message}",
@@ -221,8 +228,7 @@ namespace ShareTrader
             if (page == null)
                 return;
 
-            // Confirm deletion.
-            // Yes / No question
+            CustomMessageBox.DefaultFocus = DefaultButton.OK;
             bool answer = await CustomMessageBox.ShowQuestionAsync(
                     "Confirm Removal",
                     $"Are you sure you want to remove {companyName} from your portfolio?"
@@ -238,7 +244,8 @@ namespace ShareTrader
             if (shares != "0")
             {
                 // Yes / No question
-               answer = await CustomMessageBox.ShowQuestionAsync(
+                CustomMessageBox.DefaultFocus = DefaultButton.Yes;
+                answer = await CustomMessageBox.ShowQuestionAsync(
                      $"You still hold {shares} {companyName} shares.",
                     "Do you want to sell them?"
                     );               
@@ -284,11 +291,35 @@ namespace ShareTrader
                 }
                 // Add to Log file.
                 string logEntry = $"{companyName} Deleted ";
-                FileManager.SaveLogFile(logEntry);               
+                FileManager.SaveLogFile(logEntry);
+
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
+                await CustomMessageBox.ShowAsync(
+                    "Portfolio",
+                    $"{companyName} has been deleted.",
+                    MessageType.Information);
+
+                AppGlobals.BankBalance=0m;
+                AppGlobals.CapitalInvested = 0m;    
+                AppGlobals.PortfolioValue = 0m;
+                AppGlobals.GainsLosses = 0m;
+                AppGlobals.PortfolioItems.Clear();
+                AppGlobals.MyPortfolio.Clear(); 
 
             }
           
-            await UpdatePortfolio();
+            await UpdatePortfolio();  
+            
+            if (AppGlobals.MyPortfolio.Count == 0)
+            {
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
+                await CustomMessageBox.ShowAsync(
+                    "Portfolio",
+                    $"Your portfolio is now empty.",
+                    MessageType.Information);
+               
+            }
+
         } 
         
         private async static Task<int> CheckHoldings(string company)

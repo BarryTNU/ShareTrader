@@ -5,7 +5,7 @@ using ShareTrader.Helpers;
 
 public partial class AddCompanyPopup : ContentPage
 {
-
+    string fPath = AppGlobals.PortfolioFile;
     public event Action? CompanyAdded;
     public AppGlobals.CompanyItem NewCompany { get; set; } = new AppGlobals.CompanyItem();
     private List<AppGlobals.CompanyItem> CompaniesPopup = new();
@@ -60,6 +60,7 @@ public partial class AddCompanyPopup : ContentPage
             string.IsNullOrWhiteSpace(txtSymbol.Text) ||
             string.IsNullOrWhiteSpace(SelectedCountry))
         {
+            CustomMessageBox.DefaultFocus = DefaultButton.OK;
             await CustomMessageBox.ShowAsync(
                 "Missing Information",
                 "Please enter Company Name, Symbol and Country.",
@@ -79,6 +80,7 @@ public partial class AddCompanyPopup : ContentPage
         FileManager.SavePortfolio(NewCompany);
 
 
+        CustomMessageBox.DefaultFocus = DefaultButton.OK;
         await CustomMessageBox.ShowAsync(
             "Company Added",
             NewCompany.Name + " " + NewCompany.Symbol + " has been added.",
@@ -109,16 +111,16 @@ public partial class AddCompanyPopup : ContentPage
     private async void TestDownload_Clicked(object sender, EventArgs e)
     {
         btnTest.IsEnabled = false;
-
-        string companyName = txtName.Text.Trim();
-        string symbol = txtSymbol.Text.Trim().ToUpper();
-
+        this.IsVisible = false;
+        await Navigation.PopModalAsync();
 
 
         if (string.IsNullOrWhiteSpace(txtName.Text) ||
      string.IsNullOrWhiteSpace(txtSymbol.Text) ||
      string.IsNullOrWhiteSpace(SelectedCountry))
+
         {
+            CustomMessageBox.DefaultFocus = DefaultButton.OK;
             await CustomMessageBox.ShowAsync(
                 "Missing Information",
                 "Please enter Company Name, Symbol and Country.",
@@ -126,16 +128,18 @@ public partial class AddCompanyPopup : ContentPage
             return;
         }
 
+        string companyName = txtName.Text.Trim();
+        string symbol = txtSymbol.Text.Trim().ToUpper();
+
         string country = SelectedCountry;
 
         if (CompanyExists(companyName, symbol))
         {
+            CustomMessageBox.DefaultFocus = DefaultButton.OK;
             await CustomMessageBox.ShowAsync(
                 "Company Already Exists",
                 $"{companyName} ({symbol}) already exists in the {country} list.",
                 MessageType.Information);
-
-            btnSave.IsEnabled = false;
             return;
         }
         string provider = AppGlobals.ConfigurationManager.APIProvider;
@@ -143,35 +147,50 @@ public partial class AddCompanyPopup : ContentPage
 
         try
         {
-            bool ok = await DownloadService.DownloadData(symbol, companyName);
+            bool success = await DownloadService.DownloadData(symbol, companyName);
 
-            if (ok)
+                 if (success)
+            
+
             {
+                    // Write new company
+                    string record = $"{companyName},{symbol}";
+
+                    File.AppendAllText(fPath, record + Environment.NewLine);
+
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
-                    "Success",
-                    "Share price download succeeded.",
-                    MessageType.Information);
+                        "Portfolio",
+                        companyName + " added to Portfolio.",
+                        MessageType.Information);
+                              
 
-                btnSave.IsEnabled = true;
-             btnSave.Text = "Save";
-             btnExit.Text = "Exit";
+               // CompanyAdded?.Invoke(); // Tell MainPage to refresh.
+                await  PortfolioManager.UpdatePortfolio(); // Refresh the portfolio data.
+                                                           //  await Navigation.PopModalAsync();
+              
 
-            }
-            else
-            {
-                string message = $"Your API Providor may not support this symbol ({symbol}) or the symbol is invalid. Please check and try again.";
+
+                // Add to Log file.
+                string logEntry = $"{companyName} added to Portfolio.";
+                    FileManager.SaveLogFile(logEntry);
+
+                }
+                else
+                {
+                    string message = $"Your API Providor may not support this symbol ({symbol}) or the symbol is invalid. Please check and try again.";
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
-                    "Download Failed",
-                    $"{message}",
-                    MessageType.Warning);
+                        "Download Failed",
+                        $"{message}",
+                        MessageType.Error);
+                    success = false;
+                }
 
-                btnTest.IsEnabled = true;
-                btnSave.IsEnabled = false;
-            }
         }
         finally
         {
-           // AddCompanyPopup.IsVisible = false;
+            
         }     
 
     }

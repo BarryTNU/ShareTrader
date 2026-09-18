@@ -18,7 +18,8 @@ using ShareTrader.Helpers;
             if (page == null)
                 return;          // or return false if this method returns bool
 
-          bool answer = await CustomMessageBox.ShowQuestionAsync(
+        CustomMessageBox.DefaultFocus = DefaultButton.No;
+        bool answer = await CustomMessageBox.ShowQuestionAsync(
                 "Reset all Data. Are you sure?",
                 message              
                 );
@@ -26,19 +27,15 @@ using ShareTrader.Helpers;
             // Only proceed if user clicked Yes
             if (!answer)
             {
-                return; // User clicked No
+            await PortfolioManager.UpdatePortfolio();
+            return; // User clicked No
             }
             else         // User clicked Yes
             {
             try
-            {
-                if (File.Exists(AppGlobals.ConfigFile))
-                    File.Delete(AppGlobals.ConfigFile);
+            {                
+                {                   
 
-                if (File.Exists(AppGlobals.CompaniesFile))
-                    File.Delete(AppGlobals.CompaniesFile);
-
-                {
                     if (File.Exists(AppGlobals.ConfigFile))
                         File.Delete(AppGlobals.ConfigFile);
 
@@ -73,19 +70,22 @@ using ShareTrader.Helpers;
                             Directory.Delete(dir, true);
                         }
                     }
-                  await PortfolioManager.UpdatePortfolio();
-                  
+                    
+                    await PortfolioManager.UpdatePortfolio();                  
                 }
             }
 
             catch (Exception ex)
             {
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
                     "Error",
                     $"An error occurred while resetting data: {ex.Message}",
                     MessageType.Warning);
             }
-            }
-        }
+            
+        }       
     }
+    
+}
 

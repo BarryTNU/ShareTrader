@@ -42,6 +42,7 @@ namespace ShareTrader
 
             if (BankBalance < value)
             {
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
                     "Buy Shares",
                     "You have insufficient funds for this trade.",                                     
@@ -57,6 +58,7 @@ namespace ShareTrader
                 return;          // or return false if this method returns bool
 
             // Yes / No question
+            CustomMessageBox.DefaultFocus = DefaultButton.Yes;
             bool answer = await CustomMessageBox.ShowQuestionAsync(
                 "Confirm Purchase",
                 message
@@ -117,6 +119,8 @@ namespace ShareTrader
 
             if (totalHoldings < shares)
             {
+
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
                 await CustomMessageBox.ShowAsync(
                     "Sell Shares",
                     "You have insufficient shares for this trade.",
@@ -138,6 +142,7 @@ namespace ShareTrader
                 return;
 
             // Yes / No question
+            CustomMessageBox.DefaultFocus = DefaultButton.Yes;
             bool answer = await CustomMessageBox.ShowQuestionAsync(
                 "Confirm Sale",
                 message

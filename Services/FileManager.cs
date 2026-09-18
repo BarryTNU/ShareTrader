@@ -106,16 +106,22 @@ namespace ShareTrader.Services
         public static async Task<bool> LoadPortfolio()
         {
             string fPath = AppGlobals.PortfolioFile;
-            bool Success = false;
-
-         //   await AppGlobals.ShowMessage("Saving Portfolio", fPath);
+            bool Success = false;       
 
             if (System.IO.File.Exists(fPath))
             {
                 AppGlobals.MyPortfolio = System.IO.File.ReadAllLines(fPath).ToList();
+                AppGlobals.MyPortfolio = AppGlobals.MyPortfolio
+                    .OrderBy(company => company, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
 
                 if (AppGlobals.MyPortfolio.Count > 0)
+                {
+                    //Save the sorted list so it can be downloaded elsewhere without sorting
+                    File.WriteAllLines(fPath, AppGlobals.MyPortfolio);
                     Success = true;
+                }
             }
             return Success;
         }
@@ -157,7 +163,8 @@ namespace ShareTrader.Services
             }
             catch (Exception ex)
             {
-               CustomMessageBox.ShowAsync(
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
+                CustomMessageBox.ShowAsync(
                "Load Company Data",
                ex.Message,
                MessageType.Error);
@@ -259,7 +266,8 @@ namespace ShareTrader.Services
             }
             catch (Exception ex)
             {
-               CustomMessageBox.ShowAsync(
+                CustomMessageBox.DefaultFocus = DefaultButton.OK;
+                CustomMessageBox.ShowAsync(
                    "Load Company Data",
                    ex.Message,
                    MessageType.Error);
