@@ -160,7 +160,7 @@ private TradeMode currentTradeMode;
 
         if (company == null)
        {
-           .DefaultFocus = DefaultButton.OK;
+          CustomMessageBox.DefaultFocus = DefaultButton.OK;
           await CustomMessageBox.ShowAsync(
           "ShareTrader",
           "Please select a company.",
