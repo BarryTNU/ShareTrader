@@ -114,10 +114,7 @@ namespace ShareTrader.Services
             };
 
         public static ObservableCollection<PortfolioItem> PortfolioItems { get; } = [];
-        //public static ObservableCollection<PortfolioItem> PortfolioItems
-       //     = new ObservableCollection<PortfolioItem>();
-
-       
+              
         public class PortfolioItem
         {
             public string CompanyName { get; set; } = "";
